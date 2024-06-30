@@ -4,7 +4,11 @@ import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import { CardSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton,  } from '../../ui/skeletons';
 import CardWrapper from '@/app/ui/dashboard/cards';
- 
+import { Metadata } from 'next';
+
+export const metadata:Metadata={
+  title:'Welcome Again!'
+}
 export default async function Page() {
       return (
         <main>
