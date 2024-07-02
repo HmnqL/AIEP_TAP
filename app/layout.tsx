@@ -5,7 +5,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: {
     template: '%s | TAP by HmnqL',
-    default : 'TAP AIEP & ACME Dashboard'
+    default : 'TAP AIEP & CO Dashboard'
   },
   description: 'The official Next.js Course Dashboard, built with App Router.',
   metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),

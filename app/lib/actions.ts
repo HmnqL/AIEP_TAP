@@ -3,6 +3,10 @@ import {z} from 'zod'
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcrypt'
+
+const ITEMS_PER_PAGE = 6;
+
 
 const FormSchema = z.object({
     id: z.string(),
@@ -14,6 +18,14 @@ const FormSchema = z.object({
     date: z.string(),
 });
 
+//ADD  CREATE USER ZOD VALIDATION 
+const UserFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+})
+
 export type State = {
   errors?: {
     customerId?: string[];
@@ -22,6 +34,96 @@ export type State = {
   };
   message?: string | null;
 };
+
+export type UserState = {
+  errors?:{
+    userName?: string[];
+    userEmail?: string[];
+    userPassword?: string[];
+  };
+  message?: string | null;
+}
+
+//CREATE FORMSCHEMA
+const CreateUser = UserFormSchema.omit({id:true});
+
+
+
+//COMPLETE CREATE USER FUNCTION
+export async function createUser(formData: FormData){
+  //EXTRACT ZOD DATA FROM FORMDATA
+  const {email,name,password} = CreateUser.parse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+    name: formData.get('username'),
+  })
+  
+  /*
+  const validatedFields = CreateUser.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+    name: formData.get('username'),
+  })
+  
+  if(!validatedFields.success){
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to create Invoice'
+    }
+  }
+ */
+  const hashedPassword = await bcrypt.hash(password,10);
+
+  try {
+    await sql`
+    INSERT INTO users (name,email,password)
+    VALUES (${name},${email},${hashedPassword})
+    `
+  } catch (error) {
+    console.log("SOMETHING BAD HAPPEN")
+  }
+  redirect('/login')
+  //Redirect to Login
+}
+
+export async function fetchUsersPages(query:string){
+try {
+  const count = await sql`SELECT COUNT(*)
+    FROM users
+    WHERE
+      name ILIKE ${`%${query}`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count)) / ITEMS_PER_PAGE;
+    return totalPages;
+  } catch (error) {
+    console.error('DATABASE ERROR:',error);
+    throw new Error('FAILED TO FETCH TOTAL PAGES OF USERS')
+  }
+}
+
+export async function fetchFilteredUsers(query:string, currentPage:number){
+const offset = (currentPage - 1 ) * ITEMS_PER_PAGE;
+
+try {
+  const users = await sql<FilteredUsers>`
+  SELECT
+    name,
+    email
+  FROM users
+  WHERE
+    name ILIKE ${`%${query}%`}
+  LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}  
+  `;
+  return users.rows;
+} catch (error) {
+  console.error('DATABASE ERROR:', error);
+  throw new Error('FAILED TO FETCH USERS');
+}
+}
+
+
+
 
 
 const CreateInvoice = FormSchema.omit({id: true, date: true});
@@ -101,6 +203,8 @@ export async function updateInvoice(id: string, prevState: State ,formData: Form
 
   import { signIn } from '@/auth';
   import { AuthError } from 'next-auth';
+import { FilteredUsers } from './definitions';
+
   
 
   export async function authenticate(prevState: string | undefined, formData: FormData){

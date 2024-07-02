@@ -9,6 +9,11 @@ export type User = {
   password: string;
 };
 
+export type FilteredUsers = {
+  name:string;
+  email: string;
+}
+
 export type Customer = {
   id: string;
   name: string;

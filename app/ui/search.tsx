@@ -32,6 +32,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
         placeholder={placeholder}
         onChange={(e)=>{
           handleSearch(e.target.value)
+          
         }}
         defaultValue={searchParams.get('query')?.toString()}
       />
