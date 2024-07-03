@@ -1,5 +1,9 @@
+import clsx from "clsx";
+import { Button } from "../ui/button";
 import CodeOneLogo from "../ui/codeone-logo";
 import LoginForm from "../ui/login-form";
+import { ArrowRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { redirect } from "next/navigation";
 
 export default function Page(){
     return(
@@ -9,6 +13,15 @@ export default function Page(){
                     <CodeOneLogo/>
                 </div>
                 <LoginForm/>
+                <form action={ async ()=>{
+                    'use server'
+                    redirect('/register')
+                }}>
+                <button className="flex w-full  h-10 items-center rounded-lg bg-gray-500  border-gray-500 px-6 text-sm font-medium text-white transition-colors hover:bg-gray-400 hover:focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 active:bg-gray-600">
+                    Sign Up
+                    <PlusIcon className='h-5 w-5 ml-auto text'/>
+                </button>
+                </form>
             </div>
         </main>
     )

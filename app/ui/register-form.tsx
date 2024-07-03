@@ -1,6 +1,5 @@
 'use client'
 
-import { lusitana } from '@/app/ui/fonts';
 import {
   AtSymbolIcon,
   KeyIcon,
@@ -8,11 +7,11 @@ import {
   UserCircleIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+
 import { Button } from './button';
-import { useActionState } from 'react';
-import { UserState, authenticate, createUser } from '@/app/lib/actions';
-import { error } from 'console';
+
+import { createUser } from '@/app/lib/actions';
+
 
 
 export default function RegisterForm(){

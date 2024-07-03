@@ -4,9 +4,11 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcrypt'
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
+import { FilteredUsers } from './definitions';
 
 const ITEMS_PER_PAGE = 6;
-
 
 const FormSchema = z.object({
     id: z.string(),
@@ -35,19 +37,8 @@ export type State = {
   message?: string | null;
 };
 
-export type UserState = {
-  errors?:{
-    userName?: string[];
-    userEmail?: string[];
-    userPassword?: string[];
-  };
-  message?: string | null;
-}
-
 //CREATE FORMSCHEMA
 const CreateUser = UserFormSchema.omit({id:true});
-
-
 
 //COMPLETE CREATE USER FUNCTION
 export async function createUser(formData: FormData){
@@ -58,20 +49,6 @@ export async function createUser(formData: FormData){
     name: formData.get('username'),
   })
   
-  /*
-  const validatedFields = CreateUser.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-    name: formData.get('username'),
-  })
-  
-  if(!validatedFields.success){
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to create Invoice'
-    }
-  }
- */
   const hashedPassword = await bcrypt.hash(password,10);
 
   try {
@@ -83,7 +60,6 @@ export async function createUser(formData: FormData){
     console.log("SOMETHING BAD HAPPEN")
   }
   redirect('/login')
-  //Redirect to Login
 }
 
 export async function fetchUsersPages(query:string){
@@ -121,9 +97,6 @@ try {
   throw new Error('FAILED TO FETCH USERS');
 }
 }
-
-
-
 
 
 const CreateInvoice = FormSchema.omit({id: true, date: true});
@@ -200,12 +173,6 @@ export async function updateInvoice(id: string, prevState: State ,formData: Form
       console.log(error)
     }
   }
-
-  import { signIn } from '@/auth';
-  import { AuthError } from 'next-auth';
-import { FilteredUsers } from './definitions';
-
-  
 
   export async function authenticate(prevState: string | undefined, formData: FormData){
     try {
