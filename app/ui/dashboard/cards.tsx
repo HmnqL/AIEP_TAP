@@ -23,7 +23,7 @@ const {
 export default async function CardWrapper() {
   return (
     <>
-      {/* NOTE: comment in this code when you get to this point in the course LLEGAMOS AQUI A LAS 4:52 AM CSM*/}
+      
 
       <Card title="Cobrado" value={totalPaidInvoices} type="collected" />
       <Card title="Pendiente" value={totalPendingInvoices} type="pending" />

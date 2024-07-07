@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     template: '%s | TAP by HmnqL',
     default : 'TAP AIEP & CO Dashboard'
   },
-  description: 'The official Next.js Course Dashboard, built with App Router.',
-  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+  description: 'Proyecto de Titulo para AIEP Maipu',
+  metadataBase: new URL('www.codeone.cl'),
 }
 
 export default function RootLayout({
